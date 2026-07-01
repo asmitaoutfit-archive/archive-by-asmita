@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASMITA — The Outfit Archive</title>
+  <style>
+    :root {
+      --cream: #faf7f1;
+      --sand: #e9ded0;
+      --paper: #fffdf9;
+      --ink: #151515;
+      --muted: #746d65;
+      --line: #ddd2c4;
+      --soft: rgba(21,21,21,0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Inter, Arial, sans-serif;
+      letter-spacing: 0.01em;
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 26px 18px 70px;
+    }
+
+    header {
+      text-align: center;
+      padding: 34px 0 26px;
+    }
+
+    .logo {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 44px;
+      letter-spacing: 0.22em;
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .subtitle {
+      margin: 8px 0 16px;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .tagline {
+      max-width: 440px;
+      margin: 0 auto;
+      color: #3f3933;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .hero {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: 0 20px 60px var(--soft);
+      margin: 12px 0 22px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    .hero-image {
+      min-height: 390px;
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.15), rgba(0,0,0,0.1)),
+        url("https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1400&q=80") center/cover;
+    }
+
+    .hero-copy {
+      padding: 28px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+    }
+
+    h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 38px;
+      font-weight: 400;
+      margin: 10px 0 12px;
+      line-height: 1.05;
+    }
+
+    .hero-copy p {
+      color: #4f4840;
+      line-height: 1.7;
+      margin: 0 0 22px;
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      background: var(--ink);
+      color: white;
+      padding: 13px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      width: fit-content;
+      border: 1px solid var(--ink);
+      cursor: pointer;
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(250,247,241,.92);
+      backdrop-filter: blur(12px);
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(221,210,196,.55);
+    }
+
+    .search {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      border-radius: 999px;
+      padding: 14px 18px;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      color: #3f3933;
+      border-radius: 999px;
+      padding: 10px 14px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .filter.active {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      margin: 30px 0 16px;
+      gap: 12px;
+    }
+
+    .section-title h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 29px;
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid {
+      columns: 3 260px;
+      column-gap: 16px;
+    }
+
+    .card {
+      break-inside: avoid;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      margin: 0 0 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(21,21,21,.05);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 45px rgba(21,21,21,.09);
+    }
+
+    .card img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      background: var(--sand);
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 8px;
+    }
+
+    .card h4 {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      font-weight: 400;
+    }
+
+    .card p {
+      color: #5d554d;
+      margin: 0 0 14px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .shop-link {
+      color: var(--ink);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      text-decoration: none;
+      border-bottom: 1px solid var(--ink);
+      cursor: pointer;
+    }
+
+    dialog {
+      border: none;
+      border-radius: 28px;
+      padding: 0;
+      max-width: 780px;
+      width: calc(100% - 28px);
+      background: var(--paper);
+      box-shadow: 0 40px 90px rgba(0,0,0,.25);
+    }
+
+    dialog::backdrop {
+      background: rgba(24,20,16,.46);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      max-height: 88vh;
+      overflow: auto;
+    }
+
+    .modal img {
+      width: 100%;
+      height: 100%;
+      min-height: 440px;
+      object-fit: cover;
+      background: var(--sand);
+    }
+
+    .modal-content {
+      padding: 26px;
+    }
+
+    .close {
+      float: right;
+      border: none;
+      background: transparent;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--muted);
+    }
+
+    .modal h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+      font-weight: 400;
+      margin: 30px 0 8px;
+    }
+
+    .style-note {
+      color: #514a43;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+
+    .product {
+      border-top: 1px solid var(--line);
+      padding: 15px 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .product strong { display: block; }
+    .product small { color: var(--muted); }
+
+    .product a {
+      color: white;
+      background: var(--ink);
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .admin-note {
+      margin-top: 30px;
+      background: #f1e9df;
+      border: 1px dashed #c9bba9;
+      border-radius: 22px;
+      padding: 18px;
+      color: #4e463f;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 52px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      .logo { font-size: 36px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-image { min-height: 430px; }
+      h2 { font-size: 34px; }
+      .modal { grid-template-columns: 1fr; }
+      .modal img { min-height: 360px; }
+      .grid { columns: 2 170px; column-gap: 12px; }
+      .card { border-radius: 18px; }
+      .card-body { padding: 13px; }
+      .card h4 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1 class="logo">ASMITA</h1>
+      <div class="subtitle">The Outfit Archive</div>
+      <p class="tagline">Inspired outfits, linked for you. A curated home for OOTDs, confidence, and everyday style notes.</p>
+    </header>
+
+    <section class="hero">
+      <div class="hero-image" aria-label="Fashion editorial hero image"></div>
+      <div class="hero-copy">
+        <div class="eyebrow">Newest Look</div>
+        <h2>Minimal Coffee Girl</h2>
+        <p>A clean everyday outfit built around soft neutrals, gold details, and main-character confidence.</p>
+        <button class="button" onclick="openOutfit(0)">Shop This Look</button>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <input id="searchInput" class="search" placeholder="Search white blazer, airport, coffee..." oninput="renderOutfits()" />
+      <div class="filters" id="filters"></div>
+    </div>
+
+    <div class="section-title">
+      <h3>Latest Looks</h3>
+      <span id="count"></span>
+    </div>
+
+    <main class="grid" id="outfitGrid"></main>
+
+    <div class="admin-note">
+      <strong>How to update this website:</strong><br />
+      Replace the sample outfit names, photos, categories, style notes, and shopping links inside the <strong>outfits</strong> section of this file.
+      You can add unlimited outfits by copying one outfit block and pasting new product links.
+    </div>
+
+    <footer>
+      ASMITA — The Outfit Archive<br />
+      Full outfit links for reels, stories, and daily style inspiration.
+    </footer>
+  </div>
+
+  <dialog id="outfitDialog">
+    <div class="modal">
+      <img id="modalImage" src="" alt="" />
+      <div class="modal-content">
+        <button class="close" onclick="closeOutfit()">×</button>
+        <div class="eyebrow" id="modalCategory"></div>
+        <h3 id="modalTitle"></h3>
+        <p class="style-note" id="modalNote"></p>
+        <div id="modalProducts"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const outfits = [
+      {
+        title: "Minimal Coffee Girl",
+        category: "Coffee",
+        image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80",
+        note: "Soft neutrals make this look feel effortless. Add gold jewelry and clean shoes to make basics look more expensive.",
+        products: [
+          { name: "Cream Top", brand: "H&M", note: "Replace with your link", link: "https://www2.hm.com/" },
+          { name: "Wide Leg Jeans", brand: "Zara", note: "Similar style", link: "https://www.zara.com/" },
+          { name: "Minimal Bag", brand: "Mango", note: "Neutral everyday bag", link: "https://shop.mango.com/" }
+        ]
+      },
+      {
+        title: "Airport Neutral",
+        category: "Airport",
+        image: "https://images.unsplash.com/photo-1551803091-e20673f15770?auto=format&fit=crop&w=900&q=80",
+        note: "Comfortable but polished. A matching set, sneakers, and a structured tote always makes travel outfits look intentional.",
+        products: [
+          { name: "Knit Set", brand: "H&M", note: "Travel friendly", link: "https://www2.hm.com/" },
+          { name: "White Sneakers", brand: "Nike", note: "Clean everyday pair", link: "https://www.nike.com/" },
+          { name: "Tote Bag", brand: "Zara", note: "Fits everything", link: "https://www.zara.com/" }
+        ]
+      },
+      {
+        title: "Date Night Black",
+        category: "Date Night",
+        image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=900&q=80",
+        note: "Black never fails. Keep the outfit simple and let fit, texture, and jewelry do the talking.",
+        products: [
+          { name: "Black Dress", brand: "Zara", note: "Classic shape", link: "https://www.zara.com/" },
+          { name: "Gold Earrings", brand: "Amazon", note: "Affordable accent", link: "https://www.amazon.com/" },
+          { name: "Heels", brand: "Mango", note: "Sleek finish", link: "https://shop.mango.com/" }
+        ]
+      },
+      {
+        title: "Office But Soft",
+        category: "Office",
+        image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=80",
+        note: "A blazer makes the outfit sharp, while a soft inner layer keeps it feminine and wearable.",
+        products: [
+          { name: "Blazer", brand: "H&M", note: "Structured fit", link: "https://www2.hm.com/" },
+          { name: "Tank Top", brand: "Zara", note: "Layering basic", link: "https://www.zara.com/" },
+          { name: "Trousers", brand: "Mango", note: "Workwear staple", link: "https://shop.mango.com/" }
+        ]
+      },
+      {
+        title: "Vacation Linen",
+        category: "Vacation",
+        image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80",
+        note: "Linen, sandals, and simple accessories create that expensive vacation look without trying too hard.",
+        products: [
+          { name: "Linen Shirt", brand: "H&M", note: "Easy layering", link: "https://www2.hm.com/" },
+          { name: "Linen Pants", brand: "Zara", note: "Relaxed fit", link: "https://www.zara.com/" },
+          { name: "Sandals", brand: "Mango", note: "Vacation staple", link: "https://shop.mango.com/" }
+        ]
+      },
+      {
+        title: "Weekend Denim",
+        category: "Everyday",
+        image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80",
+        note: "Denim and a white top is a forever formula. Add sunglasses and a statement bag for more personality.",
+        products: [
+          { name: "White Top", brand: "H&M", note: "Closet basic", link: "https://www2.hm.com/" },
+          { name: "Blue Jeans", brand: "Zara", note: "Straight leg", link: "https://www.zara.com/" },
+          { name: "Sunglasses", brand: "Amazon", note: "Statement detail", link: "https://www.amazon.com/" }
+        ]
+      }
+    ];
+
+    let selectedCategory = "All";
+
+    function getCategories() {
+      return ["All", ...new Set(outfits.map(o => o.category))];
+    }
+
+    function renderFilters() {
+      const filters = document.getElementById("filters");
+      filters.innerHTML = getCategories().map(cat =>
+        `<button class="filter ${cat === selectedCategory ? "active" : ""}" onclick="selectCategory('${cat}')">${cat}</button>`
+      ).join("");
+    }
+
+    function selectCategory(cat) {
+      selectedCategory = cat;
+      renderFilters();
+      renderOutfits();
+    }
+
+    function filteredOutfits() {
+      const query = document.getElementById("searchInput").value.toLowerCase().trim();
+      return outfits.filter(o => {
+        const text = [o.title, o.category, o.note, ...o.products.flatMap(p => [p.name, p.brand])].join(" ").toLowerCase();
+        const matchesSearch = !query || text.includes(query);
+        const matchesCategory = selectedCategory === "All" || o.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      });
+    }
+
+    function renderOutfits() {
+      const grid = document.getElementById("outfitGrid");
+      const items = filteredOutfits();
+      document.getElementById("count").textContent = `${items.length} looks`;
+      grid.innerHTML = items.map((o) => {
+        const index = outfits.indexOf(o);
+        return `
+          <article class="card">
+            <img src="${o.image}" alt="${o.title}">
+            <div class="card-body">
+              <div class="meta">${o.category}</div>
+              <h4>${o.title}</h4>
+              <p>${o.note}</p>
+              <a class="shop-link" onclick="openOutfit(${index})">Shop This Look →</a>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function openOutfit(index) {
+      const o = outfits[index];
+      document.getElementById("modalImage").src = o.image;
+      document.getElementById("modalTitle").textContent = o.title;
+      document.getElementById("modalCategory").textContent = o.category;
+      document.getElementById("modalNote").textContent = o.note;
+      document.getElementById("modalProducts").innerHTML = o.products.map(p => `
+        <div class="product">
+          <div>
+            <strong>${p.name}</strong>
+            <small>${p.brand} · ${p.note}</small>
+          </div>
+          <a href="${p.link}" target="_blank" rel="noopener">Shop</a>
+        </div>
+      `).join("");
+      document.getElementById("outfitDialog").showModal();
+    }
+
+    function closeOutfit() {
+      document.getElementById("outfitDialog").close();
+    }
+
+    renderFilters();
+    renderOutfits();
+  </script>
+</body>
+</html>
